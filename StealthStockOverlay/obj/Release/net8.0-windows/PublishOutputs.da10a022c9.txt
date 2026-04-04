@@ -1,0 +1,6 @@
+C:\Users\ambiv\Downloads\StealthStockOverlay_full_fixed\StealthStockOverlay\bin\Release\net8.0-windows\publish\Assets\system_monitor.ico
+C:\Users\ambiv\Downloads\StealthStockOverlay_full_fixed\StealthStockOverlay\bin\Release\net8.0-windows\publish\SystemMonitorHelper.exe
+C:\Users\ambiv\Downloads\StealthStockOverlay_full_fixed\StealthStockOverlay\bin\Release\net8.0-windows\publish\SystemMonitorHelper.dll
+C:\Users\ambiv\Downloads\StealthStockOverlay_full_fixed\StealthStockOverlay\bin\Release\net8.0-windows\publish\SystemMonitorHelper.deps.json
+C:\Users\ambiv\Downloads\StealthStockOverlay_full_fixed\StealthStockOverlay\bin\Release\net8.0-windows\publish\SystemMonitorHelper.runtimeconfig.json
+C:\Users\ambiv\Downloads\StealthStockOverlay_full_fixed\StealthStockOverlay\bin\Release\net8.0-windows\publish\SystemMonitorHelper.pdb

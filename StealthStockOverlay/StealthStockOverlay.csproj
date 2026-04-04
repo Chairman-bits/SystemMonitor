@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AssemblyName>CoffeeBreakHelper</AssemblyName>
+    <RootNamespace>StealthStockOverlay</RootNamespace>
+    <ApplicationIcon>Assets\CoffeeBreak.ico</ApplicationIcon>
+    <AssemblyTitle>Coffee Break Helper</AssemblyTitle>
+    <Product>Coffee Break Helper</Product>
+    <AssemblyName>SystemMonitorHelper</AssemblyName>
+    <Product>System Monitor Helper</Product>
+    <AssemblyTitle>System Monitor Helper</AssemblyTitle>
+    <ApplicationIcon>Assets\system_monitor.ico</ApplicationIcon>
+  </PropertyGroup>
+  <ItemGroup>
+    <Content Include="Assets\system_monitor.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+</Project>
