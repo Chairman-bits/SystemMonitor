@@ -55,6 +55,7 @@ public partial class MainWindow : System.Windows.Window
 
         Loaded += async (_, _) =>
         {
+            await AutoUpdater.CheckAsync();
             ApplyTimerSettings();
             UpdateHotkeyHelpText();
             await RefreshQuotesAsync();
@@ -191,16 +192,22 @@ public partial class MainWindow : System.Windows.Window
         menu.Items.Add("終了", null, (_, _) => ExitApplication());
 
         System.Drawing.Icon trayIcon;
-        var iconPath = System.IO.Path.Combine(
-            AppContext.BaseDirectory,
-            "Assets",
-            "system_monitor.ico");
 
-        if (System.IO.File.Exists(iconPath))
+        try
         {
-            trayIcon = new System.Drawing.Icon(iconPath);
+            var exePath = Environment.ProcessPath;
+
+            if (!string.IsNullOrWhiteSpace(exePath) && System.IO.File.Exists(exePath))
+            {
+                trayIcon = System.Drawing.Icon.ExtractAssociatedIcon(exePath)
+                           ?? System.Drawing.SystemIcons.Application;
+            }
+            else
+            {
+                trayIcon = System.Drawing.SystemIcons.Application;
+            }
         }
-        else
+        catch
         {
             trayIcon = System.Drawing.SystemIcons.Application;
         }

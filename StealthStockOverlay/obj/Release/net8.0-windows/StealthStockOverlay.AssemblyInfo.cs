@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("SystemMonitorHelper")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d87eac28be0b95ff795e8a85b682e7d97a6f7724")]
 [assembly: System.Reflection.AssemblyProductAttribute("System Monitor Helper")]
 [assembly: System.Reflection.AssemblyTitleAttribute("System Monitor Helper")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

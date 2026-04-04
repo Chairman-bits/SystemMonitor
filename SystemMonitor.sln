@@ -1,0 +1,30 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StealthStockOverlay", "StealthStockOverlay\StealthStockOverlay.csproj", "{02A8AC81-7F9D-4DB3-AB2A-0174338358DB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Updater", "Updater\Updater.csproj", "{34834AA8-E46F-49B6-BF68-4D3DA81CF582}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{02A8AC81-7F9D-4DB3-AB2A-0174338358DB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{02A8AC81-7F9D-4DB3-AB2A-0174338358DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{02A8AC81-7F9D-4DB3-AB2A-0174338358DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{02A8AC81-7F9D-4DB3-AB2A-0174338358DB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{34834AA8-E46F-49B6-BF68-4D3DA81CF582}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{34834AA8-E46F-49B6-BF68-4D3DA81CF582}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{34834AA8-E46F-49B6-BF68-4D3DA81CF582}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{34834AA8-E46F-49B6-BF68-4D3DA81CF582}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {32A90FE7-9426-443F-B688-4B55ADA4F27F}
+	EndGlobalSection
+EndGlobal

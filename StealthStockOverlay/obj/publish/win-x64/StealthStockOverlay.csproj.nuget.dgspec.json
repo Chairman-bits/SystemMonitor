@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\ambiv\\Downloads\\StealthStockOverlay_full_fixed\\StealthStockOverlay\\StealthStockOverlay.csproj": {}
+    "C:\\Program Files\\work\\git\\BITS\\SystemMonitor\\StealthStockOverlay\\StealthStockOverlay.csproj": {}
   },
   "projects": {
-    "C:\\Users\\ambiv\\Downloads\\StealthStockOverlay_full_fixed\\StealthStockOverlay\\StealthStockOverlay.csproj": {
-      "version": "1.0.0",
+    "C:\\Program Files\\work\\git\\BITS\\SystemMonitor\\StealthStockOverlay\\StealthStockOverlay.csproj": {
+      "version": "1.1.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\ambiv\\Downloads\\StealthStockOverlay_full_fixed\\StealthStockOverlay\\StealthStockOverlay.csproj",
+        "projectUniqueName": "C:\\Program Files\\work\\git\\BITS\\SystemMonitor\\StealthStockOverlay\\StealthStockOverlay.csproj",
         "projectName": "SystemMonitorHelper",
-        "projectPath": "C:\\Users\\ambiv\\Downloads\\StealthStockOverlay_full_fixed\\StealthStockOverlay\\StealthStockOverlay.csproj",
+        "projectPath": "C:\\Program Files\\work\\git\\BITS\\SystemMonitor\\StealthStockOverlay\\StealthStockOverlay.csproj",
         "packagesPath": "C:\\Users\\ambiv\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\ambiv\\Downloads\\StealthStockOverlay_full_fixed\\StealthStockOverlay\\obj\\publish\\win-x64\\",
+        "outputPath": "C:\\Program Files\\work\\git\\BITS\\SystemMonitor\\StealthStockOverlay\\obj\\publish\\win-x64\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -50,14 +50,6 @@
       "frameworks": {
         "net8.0-windows7.0": {
           "targetAlias": "net8.0-windows",
-          "dependencies": {
-            "Microsoft.NET.ILLink.Tasks": {
-              "suppressParent": "All",
-              "target": "Package",
-              "version": "[8.0.25, )",
-              "autoReferenced": true
-            }
-          },
           "imports": [
             "net461",
             "net462",

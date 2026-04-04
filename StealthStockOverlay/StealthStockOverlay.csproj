@@ -6,19 +6,33 @@
     <UseWindowsForms>true</UseWindowsForms>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <AssemblyName>CoffeeBreakHelper</AssemblyName>
+
     <RootNamespace>StealthStockOverlay</RootNamespace>
-    <ApplicationIcon>Assets\CoffeeBreak.ico</ApplicationIcon>
-    <AssemblyTitle>Coffee Break Helper</AssemblyTitle>
-    <Product>Coffee Break Helper</Product>
     <AssemblyName>SystemMonitorHelper</AssemblyName>
-    <Product>System Monitor Helper</Product>
     <AssemblyTitle>System Monitor Helper</AssemblyTitle>
+    <Product>System Monitor Helper</Product>
+
     <ApplicationIcon>Assets\system_monitor.ico</ApplicationIcon>
+
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <SelfContained>true</SelfContained>
+    <PublishSingleFile>true</PublishSingleFile>
+    <PublishTrimmed>false</PublishTrimmed>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+    <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
+    <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+
+    <Version>1.1.0</Version>
+    <FileVersion>1.1.0.0</FileVersion>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <InformationalVersion>1.1.0</InformationalVersion>
   </PropertyGroup>
-  <ItemGroup>
-    <Content Include="Assets\system_monitor.ico">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
+
+  <Target Name="CopyUpdaterAfterPublish" AfterTargets="Publish">
+    <Copy
+      SourceFiles="..\Updater\bin\Release\net8.0\win-x64\publish\Updater.exe"
+      DestinationFolder="$(PublishDir)"
+      SkipUnchangedFiles="true"
+      Condition="Exists('..\Updater\bin\Release\net8.0\win-x64\publish\Updater.exe')" />
+  </Target>
 </Project>
