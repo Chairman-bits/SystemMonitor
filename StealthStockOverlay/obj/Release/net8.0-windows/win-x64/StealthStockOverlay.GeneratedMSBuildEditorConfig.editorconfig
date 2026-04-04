@@ -1,8 +1,4 @@
 is_global = true
-build_property.EnableAotAnalyzer = 
-build_property.EnableSingleFileAnalyzer = true
-build_property.EnableTrimAnalyzer = 
-build_property.IncludeAllContentForSelfExtract = 
 build_property.ApplicationManifest = 
 build_property.StartupObject = 
 build_property.ApplicationDefaultFont = 
@@ -20,7 +16,7 @@ build_property.PlatformNeutralAssembly =
 build_property.EnforceExtendedAnalyzerRules = 
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = StealthStockOverlay
-build_property.ProjectDir = C:\Users\ambiv\Downloads\StealthStockOverlay_full_fixed\StealthStockOverlay\
+build_property.ProjectDir = C:\Program Files\work\git\BITS\SystemMonitor\StealthStockOverlay\
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 
 build_property.CsWinRTUseWindowsUIXamlProjections = false

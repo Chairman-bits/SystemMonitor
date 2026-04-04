@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net8.0-windows</TargetFramework>
@@ -17,8 +17,33 @@
     <ApplicationIcon>Assets\system_monitor.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="version.txt" />
+  </ItemGroup>
+  <ItemGroup>
     <Content Include="Assets\system_monitor.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="version.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
+  <Target Name="CopyUpdaterAfterPublish" AfterTargets="Publish">
+    <PropertyGroup>
+      <UpdaterSource>..\Updater\bin\Release\net8.0\Updater.exe</UpdaterSource>
+      <UpdaterDest>$(PublishDir)Updater.exe</UpdaterDest>
+    </PropertyGroup>
+
+    <Message Text="Copy Updater: $(UpdaterSource) -> $(UpdaterDest)" Importance="high" />
+
+    <Copy SourceFiles="$(UpdaterSource)"
+          DestinationFiles="$(UpdaterDest)"
+          SkipUnchangedFiles="true"
+          Condition="Exists('$(UpdaterSource)')" />
+  </Target>
+  <Target Name="CopyUpdaterAfterPublish" AfterTargets="Publish">
+    <Copy SourceFiles="..\Updater\bin\Release\net8.0\Updater.exe"
+          DestinationFolder="$(PublishDir)"
+          SkipUnchangedFiles="true"
+          Condition="Exists('..\Updater\bin\Release\net8.0\Updater.exe')" />
+  </Target>
 </Project>

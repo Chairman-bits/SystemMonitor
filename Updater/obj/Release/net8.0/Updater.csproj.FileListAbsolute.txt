@@ -1,0 +1,15 @@
+C:\Program Files\work\git\BITS\SystemMonitor\Updater\bin\Release\net8.0\Updater.exe
+C:\Program Files\work\git\BITS\SystemMonitor\Updater\bin\Release\net8.0\Updater.deps.json
+C:\Program Files\work\git\BITS\SystemMonitor\Updater\bin\Release\net8.0\Updater.runtimeconfig.json
+C:\Program Files\work\git\BITS\SystemMonitor\Updater\bin\Release\net8.0\Updater.dll
+C:\Program Files\work\git\BITS\SystemMonitor\Updater\bin\Release\net8.0\Updater.pdb
+C:\Program Files\work\git\BITS\SystemMonitor\Updater\obj\Release\net8.0\Updater.GeneratedMSBuildEditorConfig.editorconfig
+C:\Program Files\work\git\BITS\SystemMonitor\Updater\obj\Release\net8.0\Updater.AssemblyInfoInputs.cache
+C:\Program Files\work\git\BITS\SystemMonitor\Updater\obj\Release\net8.0\Updater.AssemblyInfo.cs
+C:\Program Files\work\git\BITS\SystemMonitor\Updater\obj\Release\net8.0\Updater.csproj.CoreCompileInputs.cache
+C:\Program Files\work\git\BITS\SystemMonitor\Updater\obj\Release\net8.0\Updater.sourcelink.json
+C:\Program Files\work\git\BITS\SystemMonitor\Updater\obj\Release\net8.0\Updater.dll
+C:\Program Files\work\git\BITS\SystemMonitor\Updater\obj\Release\net8.0\refint\Updater.dll
+C:\Program Files\work\git\BITS\SystemMonitor\Updater\obj\Release\net8.0\Updater.pdb
+C:\Program Files\work\git\BITS\SystemMonitor\Updater\obj\Release\net8.0\Updater.genruntimeconfig.cache
+C:\Program Files\work\git\BITS\SystemMonitor\Updater\obj\Release\net8.0\ref\Updater.dll

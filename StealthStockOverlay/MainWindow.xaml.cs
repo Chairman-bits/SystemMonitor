@@ -55,6 +55,7 @@ public partial class MainWindow : System.Windows.Window
 
         Loaded += async (_, _) =>
         {
+            await AutoUpdater.CheckAsync();
             ApplyTimerSettings();
             UpdateHotkeyHelpText();
             await RefreshQuotesAsync();

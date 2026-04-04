@@ -9,5 +9,6 @@
 //------------------------------------------------------------------------------
 
 [assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("assets/system_monitor.ico")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("version.txt")]
 
 
