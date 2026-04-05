@@ -222,32 +222,8 @@ public static class AutoUpdater
                 return;
             }
 
-            var sb = new StringBuilder();
-
-            foreach (var item in _releaseNotes)
-            {
-                sb.AppendLine($"■ {item.version} ({item.publishedAt})");
-
-                if (item.notes != null && item.notes.Count > 0)
-                {
-                    foreach (var note in item.notes)
-                    {
-                        sb.AppendLine($"・{note}");
-                    }
-                }
-                else
-                {
-                    sb.AppendLine("・更新内容なし");
-                }
-
-                sb.AppendLine();
-            }
-
-            System.Windows.MessageBox.Show(
-                sb.ToString().Trim(),
-                "更新履歴",
-                System.Windows.MessageBoxButton.OK,
-                System.Windows.MessageBoxImage.Information);
+            var window = new StealthStockOverlay.Windows.UpdateHistoryWindow(_releaseNotes);
+            window.ShowDialog();
         }
         catch
         {
