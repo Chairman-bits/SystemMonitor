@@ -185,27 +185,37 @@ public partial class MainWindow : System.Windows.Window
     private WinForms.NotifyIcon CreateNotifyIcon()
     {
         var menu = new WinForms.ContextMenuStrip();
-        menu.Items.Add("表示", null, (_, _) => ShowOverlay());
-        menu.Items.Add("非表示", null, (_, _) => Hide());
-        menu.Items.Add("今すぐ更新", null, async (_, _) => await RefreshQuotesAsync());
-        menu.Items.Add("設定", null, (_, _) => OpenSettings());
-        menu.Items.Add("終了", null, (_, _) => ExitApplication());
+
+        var showItem = new WinForms.ToolStripMenuItem("表示", null, (_, _) => ShowOverlay());
+        var hideItem = new WinForms.ToolStripMenuItem("非表示", null, (_, _) => Hide());
+        var refreshItem = new WinForms.ToolStripMenuItem("今すぐ更新", null, async (_, _) => await RefreshQuotesAsync());
+        var updateStatusItem = new WinForms.ToolStripMenuItem("更新確認中...");
+        var applyUpdateItem = new WinForms.ToolStripMenuItem("更新を適用", null, async (_, _) => await AutoUpdater.ApplyUpdateAsync());
+        var releaseNotesItem = new WinForms.ToolStripMenuItem("更新履歴", null, async (_, _) => await AutoUpdater.ShowReleaseNotesAsync());
+        var settingsItem = new WinForms.ToolStripMenuItem("設定", null, (_, _) => OpenSettings());
+        var exitItem = new WinForms.ToolStripMenuItem("終了", null, (_, _) => ExitApplication());
+
+        updateStatusItem.Enabled = false;
+        applyUpdateItem.Visible = false;
+
+        menu.Items.Add(showItem);
+        menu.Items.Add(hideItem);
+        menu.Items.Add(refreshItem);
+        menu.Items.Add(new WinForms.ToolStripSeparator());
+        menu.Items.Add(updateStatusItem);
+        menu.Items.Add(applyUpdateItem);
+        menu.Items.Add(releaseNotesItem);
+        menu.Items.Add(new WinForms.ToolStripSeparator());
+        menu.Items.Add(settingsItem);
+        menu.Items.Add(exitItem);
 
         System.Drawing.Icon trayIcon;
-
         try
         {
             var exePath = Environment.ProcessPath;
-
-            if (!string.IsNullOrWhiteSpace(exePath) && System.IO.File.Exists(exePath))
-            {
-                trayIcon = System.Drawing.Icon.ExtractAssociatedIcon(exePath)
-                           ?? System.Drawing.SystemIcons.Application;
-            }
-            else
-            {
-                trayIcon = System.Drawing.SystemIcons.Application;
-            }
+            trayIcon = !string.IsNullOrWhiteSpace(exePath) && System.IO.File.Exists(exePath)
+                ? System.Drawing.Icon.ExtractAssociatedIcon(exePath) ?? System.Drawing.SystemIcons.Application
+                : System.Drawing.SystemIcons.Application;
         }
         catch
         {
@@ -221,6 +231,26 @@ public partial class MainWindow : System.Windows.Window
         };
 
         notifyIcon.DoubleClick += (_, _) => ShowOverlay();
+
+        _ = Task.Run(async () =>
+        {
+            await AutoUpdater.CheckSilentlyAsync();
+
+            Dispatcher.Invoke(() =>
+            {
+                if (AutoUpdater.HasUpdate)
+                {
+                    updateStatusItem.Text = $"更新あり: {AutoUpdater.LatestVersionText}";
+                    applyUpdateItem.Visible = true;
+                }
+                else
+                {
+                    updateStatusItem.Text = "更新なし";
+                    applyUpdateItem.Visible = false;
+                }
+            });
+        });
+
         return notifyIcon;
     }
 
