@@ -21,6 +21,7 @@ public partial class SettingsWindow : System.Windows.Window
         WinCheckBox.IsChecked = settings.HotkeyWin;
         ShowOnlyWhileHeldCheckBox.IsChecked = settings.ShowOnlyWhileHotkeyHeld;
 
+        // ホットキー候補
         for (char c = 'A'; c <= 'Z'; c++)
         {
             HotkeyKeyComboBox.Items.Add(c.ToString());
@@ -35,9 +36,10 @@ public partial class SettingsWindow : System.Windows.Window
             ? "Z"
             : settings.HotkeyKey.ToUpperInvariant();
 
-        OverlayMarginXTextBox.Text = settings.OverlayMarginX.ToString("0");
-        OverlayMarginYTextBox.Text = settings.OverlayMarginY.ToString("0");
+        OverlayMarginXTextBox.Text = settings.OverlayMarginX.ToString();
+        OverlayMarginYTextBox.Text = settings.OverlayMarginY.ToString();
 
+        // 表示位置
         foreach (var item in OverlayPositionComboBox.Items.OfType<ComboBoxItem>())
         {
             if ((item.Tag?.ToString() ?? "") == settings.OverlayPosition)
@@ -60,6 +62,7 @@ public partial class SettingsWindow : System.Windows.Window
         DisplayMonitorComboBox.Items.Clear();
 
         var screens = WinForms.Screen.AllScreens;
+
         for (int i = 0; i < screens.Length; i++)
         {
             var screen = screens[i];
@@ -96,20 +99,28 @@ public partial class SettingsWindow : System.Windows.Window
 
         if (symbols.Count == 0)
         {
-            System.Windows.MessageBox.Show("銘柄を1つ以上入力してください。", "入力エラー", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Warning);
+            System.Windows.MessageBox.Show("銘柄を1つ以上入力してください。", "入力エラー",
+                System.Windows.MessageBoxButton.OK,
+                System.Windows.MessageBoxImage.Warning);
             return;
         }
 
-        if (!int.TryParse(RefreshSecondsTextBox.Text.Trim(), out var refreshSeconds) || refreshSeconds < 3 || refreshSeconds > 300)
+        if (!int.TryParse(RefreshSecondsTextBox.Text.Trim(), out var refreshSeconds) ||
+            refreshSeconds < 3 || refreshSeconds > 300)
         {
-            System.Windows.MessageBox.Show("更新間隔は 3〜300 秒で入力してください。", "入力エラー", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Warning);
+            System.Windows.MessageBox.Show("更新間隔は 3〜300 秒で入力してください。", "入力エラー",
+                System.Windows.MessageBoxButton.OK,
+                System.Windows.MessageBoxImage.Warning);
             return;
         }
 
         var hotkeyKey = (HotkeyKeyComboBox.SelectedItem?.ToString() ?? "").Trim().ToUpperInvariant();
+
         if (string.IsNullOrWhiteSpace(hotkeyKey))
         {
-            System.Windows.MessageBox.Show("ホットキーのキーを選択してください。", "入力エラー", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Warning);
+            System.Windows.MessageBox.Show("ホットキーのキーを選択してください。", "入力エラー",
+                System.Windows.MessageBoxButton.OK,
+                System.Windows.MessageBoxImage.Warning);
             return;
         }
 
@@ -118,25 +129,40 @@ public partial class SettingsWindow : System.Windows.Window
             AltCheckBox.IsChecked != true &&
             WinCheckBox.IsChecked != true)
         {
-            System.Windows.MessageBox.Show("ホットキーは修飾キーを1つ以上選択してください。", "入力エラー", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Warning);
+            System.Windows.MessageBox.Show("ホットキーは修飾キーを1つ以上選択してください。", "入力エラー",
+                System.Windows.MessageBoxButton.OK,
+                System.Windows.MessageBoxImage.Warning);
             return;
         }
 
-        if (!double.TryParse(OverlayMarginXTextBox.Text.Trim(), out var marginX) || marginX < 0 || marginX > 200)
+        if (!double.TryParse(OverlayMarginXTextBox.Text.Trim(), out var marginX) ||
+            marginX < 0 || marginX > 200)
         {
-            System.Windows.MessageBox.Show("横余白は 0〜200 で入力してください。", "入力エラー", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Warning);
+            System.Windows.MessageBox.Show("横余白は 0〜200 で入力してください。", "入力エラー",
+                System.Windows.MessageBoxButton.OK,
+                System.Windows.MessageBoxImage.Warning);
             return;
         }
 
-        if (!double.TryParse(OverlayMarginYTextBox.Text.Trim(), out var marginY) || marginY < 0 || marginY > 200)
+        if (!double.TryParse(OverlayMarginYTextBox.Text.Trim(), out var marginY) ||
+            marginY < 0 || marginY > 200)
         {
-            System.Windows.MessageBox.Show("縦余白は 0〜200 で入力してください。", "入力エラー", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Warning);
+            System.Windows.MessageBox.Show("縦余白は 0〜200 で入力してください。", "入力エラー",
+                System.Windows.MessageBoxButton.OK,
+                System.Windows.MessageBoxImage.Warning);
             return;
         }
 
-        var selectedPosition = (OverlayPositionComboBox.SelectedItem as ComboBoxItem)?.Tag?.ToString() ?? "BottomRight";
-        var selectedMonitorIndex = (DisplayMonitorComboBox.SelectedItem as ComboBoxItem)?.Tag is int idx ? idx : 0;
+        var selectedPosition =
+            (OverlayPositionComboBox.SelectedItem as ComboBoxItem)?.Tag?.ToString()
+            ?? "BottomRight";
 
+        var selectedMonitorIndex =
+            (DisplayMonitorComboBox.SelectedItem as ComboBoxItem)?.Tag is int idx
+            ? idx
+            : 0;
+
+        // ★ ここが今回の修正ポイント（double→int）
         ResultSettings = new AppSettings
         {
             Symbols = symbols,
@@ -148,8 +174,8 @@ public partial class SettingsWindow : System.Windows.Window
             HotkeyKey = hotkeyKey,
             ShowOnlyWhileHotkeyHeld = ShowOnlyWhileHeldCheckBox.IsChecked == true,
             OverlayPosition = selectedPosition,
-            OverlayMarginX = marginX,
-            OverlayMarginY = marginY,
+            OverlayMarginX = (int)Math.Round(marginX),
+            OverlayMarginY = (int)Math.Round(marginY),
             DisplayMonitorIndex = selectedMonitorIndex
         };
 

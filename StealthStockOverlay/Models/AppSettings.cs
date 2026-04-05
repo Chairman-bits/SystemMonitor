@@ -1,29 +1,35 @@
-namespace StealthStockOverlay.Models;
+using System.Collections.Generic;
 
-public class AppSettings
+namespace StealthStockOverlay
 {
-    public List<string> Symbols { get; set; } = new()
+    public class AppSettings
     {
-        "4063",
-        "8001",
-        "8058",
-        "9432"
-    };
+        public List<string> Symbols { get; set; } = new();
+        public int RefreshSeconds { get; set; } = 5;
 
-    public int RefreshSeconds { get; set; } = 10;
+        public bool HotkeyCtrl { get; set; }
+        public bool HotkeyShift { get; set; }
+        public bool HotkeyAlt { get; set; } = true;
+        public bool HotkeyWin { get; set; }
 
-    public bool HotkeyCtrl { get; set; } = true;
-    public bool HotkeyShift { get; set; } = true;
-    public bool HotkeyAlt { get; set; } = false;
-    public bool HotkeyWin { get; set; } = false;
-    public string HotkeyKey { get; set; } = "Z";
+        public string HotkeyKey { get; set; } = "Q";
 
-    public bool ShowOnlyWhileHotkeyHeld { get; set; } = true;
+        public int OverlayMarginX { get; set; } = 12;
+        public int OverlayMarginY { get; set; } = 12;
 
-    public string OverlayPosition { get; set; } = "BottomRight";
-    public double OverlayMarginX { get; set; } = 12;
-    public double OverlayMarginY { get; set; } = 12;
+        public string OverlayPosition { get; set; } = "右下";
 
-    // 追加: 表示するディスプレイ番号
-    public int DisplayMonitorIndex { get; set; } = 0;
+        // 新方式
+        public bool ShowOnlyWhileHeld { get; set; } = true;
+        public string DisplayMonitor { get; set; } = string.Empty;
+
+        // 旧コード互換
+        public bool ShowOnlyWhileHotkeyHeld
+        {
+            get => ShowOnlyWhileHeld;
+            set => ShowOnlyWhileHeld = value;
+        }
+
+        public int DisplayMonitorIndex { get; set; } = 0;
+    }
 }

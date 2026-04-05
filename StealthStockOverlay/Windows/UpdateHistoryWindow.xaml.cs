@@ -38,6 +38,12 @@ namespace StealthStockOverlay.Windows
             if (string.IsNullOrWhiteSpace(keyword))
             {
                 BindList(_allReleaseNotes);
+
+                if (_allReleaseNotes.Count > 0)
+                {
+                    ReleaseListBox.SelectedIndex = 0;
+                }
+
                 return;
             }
 
@@ -60,7 +66,8 @@ namespace StealthStockOverlay.Windows
             else
             {
                 VersionTextBlock.Text = "該当する履歴がありません";
-                DetailTextBlock.Text = string.Empty;
+                PublishedAtTextBlock.Text = "";
+                DetailTextBlock.Text = "";
             }
         }
 
@@ -71,15 +78,13 @@ namespace StealthStockOverlay.Windows
                 return;
             }
 
-            VersionTextBlock.Text = $"{item.version}  ({item.publishedAt})";
+            VersionTextBlock.Text = item.version;
+            PublishedAtTextBlock.Text = item.publishedAt;
 
             var sb = new StringBuilder();
 
             if (item.notes != null && item.notes.Count > 0)
             {
-                sb.AppendLine("更新内容");
-                sb.AppendLine();
-
                 foreach (var note in item.notes)
                 {
                     sb.AppendLine($"・{note}");
