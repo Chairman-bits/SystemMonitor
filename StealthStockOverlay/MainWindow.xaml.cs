@@ -9,6 +9,7 @@ using System.Windows.Threading;
 using Input = System.Windows.Input;
 using Media = System.Windows.Media;
 using WinForms = System.Windows.Forms;
+using System.IO;
 
 namespace StealthStockOverlay;
 
@@ -32,6 +33,9 @@ public partial class MainWindow : System.Windows.Window
     private HwndSource? _source;
     private AppSettings _settings = new();
     private bool _isRefreshing;
+
+    [System.Runtime.InteropServices.DllImport("user32.dll", CharSet = System.Runtime.InteropServices.CharSet.Auto)]
+    private static extern bool DestroyIcon(IntPtr handle);
 
     public MainWindow()
     {
@@ -186,48 +190,99 @@ public partial class MainWindow : System.Windows.Window
     {
         var menu = new WinForms.ContextMenuStrip();
 
-        var showItem = new WinForms.ToolStripMenuItem("表示", null, (_, _) => ShowOverlay());
-        var hideItem = new WinForms.ToolStripMenuItem("非表示", null, (_, _) => Hide());
-        var refreshItem = new WinForms.ToolStripMenuItem("今すぐ更新", null, async (_, _) => await RefreshQuotesAsync());
         var updateStatusItem = new WinForms.ToolStripMenuItem("更新確認中...");
+        updateStatusItem.Enabled = false;
+
+        var versionInfoItem = new WinForms.ToolStripMenuItem("現在: - / 最新: -");
+        versionInfoItem.Enabled = false;
+
         var applyUpdateItem = new WinForms.ToolStripMenuItem("更新を適用", null, async (_, _) => await AutoUpdater.ApplyUpdateAsync());
+        applyUpdateItem.Visible = false;
+
+        var refreshItem = new WinForms.ToolStripMenuItem("今すぐ更新", null, async (_, _) => await RefreshQuotesAsync());
         var releaseNotesItem = new WinForms.ToolStripMenuItem("更新履歴", null, async (_, _) => await AutoUpdater.ShowReleaseNotesAsync());
         var settingsItem = new WinForms.ToolStripMenuItem("設定", null, (_, _) => OpenSettings());
         var exitItem = new WinForms.ToolStripMenuItem("終了", null, (_, _) => ExitApplication());
 
-        updateStatusItem.Enabled = false;
-        applyUpdateItem.Visible = false;
-
-        menu.Items.Add(showItem);
-        menu.Items.Add(hideItem);
-        menu.Items.Add(refreshItem);
-        menu.Items.Add(new WinForms.ToolStripSeparator());
         menu.Items.Add(updateStatusItem);
+        menu.Items.Add(versionInfoItem);
         menu.Items.Add(applyUpdateItem);
+        menu.Items.Add(new WinForms.ToolStripSeparator());
+        menu.Items.Add(refreshItem);
         menu.Items.Add(releaseNotesItem);
         menu.Items.Add(new WinForms.ToolStripSeparator());
         menu.Items.Add(settingsItem);
         menu.Items.Add(exitItem);
 
-        System.Drawing.Icon trayIcon;
+        // ★初期値必須
+        System.Drawing.Icon normalIcon = System.Drawing.SystemIcons.Application;
+        System.Drawing.Icon updateIcon = System.Drawing.SystemIcons.Application;
+
         try
         {
             var exePath = Environment.ProcessPath;
-            trayIcon = !string.IsNullOrWhiteSpace(exePath) && System.IO.File.Exists(exePath)
-                ? System.Drawing.Icon.ExtractAssociatedIcon(exePath) ?? System.Drawing.SystemIcons.Application
-                : System.Drawing.SystemIcons.Application;
+
+            if (!string.IsNullOrWhiteSpace(exePath) && System.IO.File.Exists(exePath))
+            {
+                normalIcon = System.Drawing.Icon.ExtractAssociatedIcon(exePath)
+                             ?? System.Drawing.SystemIcons.Application;
+            }
         }
-        catch
-        {
-            trayIcon = System.Drawing.SystemIcons.Application;
-        }
+        catch { }
+
+        updateIcon = CreateUpdateIcon(normalIcon);
 
         var notifyIcon = new WinForms.NotifyIcon
         {
-            Icon = trayIcon,
+            Icon = normalIcon,
             Visible = true,
             Text = "System Monitor Helper",
             ContextMenuStrip = menu
+        };
+
+        // ★ここをラムダに変更（これが重要）
+        Action applyUpdateMenuState = () =>
+        {
+            if (!AutoUpdater.LastCheckSucceeded)
+            {
+                updateStatusItem.Text = "更新確認失敗";
+
+                var latestText = string.IsNullOrWhiteSpace(AutoUpdater.LatestVersionText)
+                    ? "取得失敗"
+                    : AutoUpdater.LatestVersionText;
+
+                versionInfoItem.Text = $"現在: {AutoUpdater.CurrentVersionText} / 最新: {latestText}";
+
+                applyUpdateItem.Visible = false;
+                notifyIcon.Icon = normalIcon;
+
+                if (!string.IsNullOrWhiteSpace(AutoUpdater.LastErrorMessage))
+                {
+                    releaseNotesItem.Text = $"エラー: {AutoUpdater.LastErrorMessage}";
+                }
+                else
+                {
+                    releaseNotesItem.Text = "更新履歴";
+                }
+
+                return;
+            }
+
+            releaseNotesItem.Text = "更新履歴";
+            versionInfoItem.Text = $"現在: {AutoUpdater.CurrentVersionText} / 最新: {AutoUpdater.LatestVersionText}";
+
+            if (AutoUpdater.HasUpdate)
+            {
+                updateStatusItem.Text = $"【更新あり】 {AutoUpdater.LatestVersionText}";
+                applyUpdateItem.Visible = true;
+                notifyIcon.Icon = updateIcon;
+            }
+            else
+            {
+                updateStatusItem.Text = "更新なし";
+                applyUpdateItem.Visible = false;
+                notifyIcon.Icon = normalIcon;
+            }
         };
 
         notifyIcon.DoubleClick += (_, _) => ShowOverlay();
@@ -238,20 +293,69 @@ public partial class MainWindow : System.Windows.Window
 
             Dispatcher.Invoke(() =>
             {
-                if (AutoUpdater.HasUpdate)
-                {
-                    updateStatusItem.Text = $"更新あり: {AutoUpdater.LatestVersionText}";
-                    applyUpdateItem.Visible = true;
-                }
-                else
-                {
-                    updateStatusItem.Text = "更新なし";
-                    applyUpdateItem.Visible = false;
-                }
+                applyUpdateMenuState();
             });
         });
 
         return notifyIcon;
+    }
+
+    private System.Drawing.Icon CreateUpdateIcon(System.Drawing.Icon baseIcon)
+    {
+        var size = WinForms.SystemInformation.SmallIconSize;
+
+        using var bmp = new System.Drawing.Bitmap(size.Width, size.Height);
+        using var g = System.Drawing.Graphics.FromImage(bmp);
+
+        g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+        g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+        g.Clear(System.Drawing.Color.Transparent);
+
+        g.DrawIcon(baseIcon, 0, 0);
+
+        int badgeSize = Math.Max(8, (int)(size.Width * 0.55));
+        int x = size.Width - badgeSize;
+        int y = 0;
+
+        var badgeRect = new System.Drawing.Rectangle(x, y, badgeSize, badgeSize);
+
+        using var fillBrush = new System.Drawing.SolidBrush(System.Drawing.Color.Red);
+        using var borderPen = new System.Drawing.Pen(System.Drawing.Color.White, 2);
+
+        g.FillEllipse(fillBrush, badgeRect);
+        g.DrawEllipse(borderPen, badgeRect);
+
+        // 白い上向き矢印を描く
+        using var arrowBrush = new System.Drawing.SolidBrush(System.Drawing.Color.White);
+
+        int centerX = x + badgeSize / 2;
+        int topY = y + 3;
+        int bottomY = y + badgeSize - 4;
+        int shaftWidth = Math.Max(2, badgeSize / 5);
+        int headWidth = Math.Max(6, badgeSize / 2);
+
+        var shaftRect = new System.Drawing.Rectangle(
+            centerX - shaftWidth / 2,
+            y + badgeSize / 3,
+            shaftWidth,
+            bottomY - (y + badgeSize / 3));
+
+        g.FillRectangle(arrowBrush, shaftRect);
+
+        var headPoints = new[]
+        {
+        new System.Drawing.Point(centerX, topY),
+        new System.Drawing.Point(centerX - headWidth / 2, y + badgeSize / 2),
+        new System.Drawing.Point(centerX + headWidth / 2, y + badgeSize / 2)
+    };
+
+        g.FillPolygon(arrowBrush, headPoints);
+
+        var hIcon = bmp.GetHicon();
+        var icon = (System.Drawing.Icon)System.Drawing.Icon.FromHandle(hIcon).Clone();
+        DestroyIcon(hIcon);
+
+        return icon;
     }
 
     private void MainWindow_Closing(object? sender, CancelEventArgs e)

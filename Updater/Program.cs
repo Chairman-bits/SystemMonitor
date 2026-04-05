@@ -1,7 +1,6 @@
 using System;
 using System.Diagnostics;
 using System.IO;
-using System.IO.Compression;
 using System.Threading;
 
 namespace Updater
@@ -38,66 +37,50 @@ namespace Updater
                     return;
                 }
 
-                var zipPath = args[0].Trim().Trim('"');
-                var appDir = args[1].Trim().Trim('"');
+                var sourceExe = args[0].Trim('"');
+                var destExe = args[1].Trim('"');
+                var appDir = Path.GetDirectoryName(destExe) ?? "";
 
-                Log($"zipPath = {zipPath}");
-                Log($"appDir = {appDir}");
-
-                Thread.Sleep(2000);
-
-                var tempDir = Path.Combine(
-                    Path.GetTempPath(),
-                    "SystemMonitor_Apply_" + Guid.NewGuid().ToString("N"));
-
-                Directory.CreateDirectory(tempDir);
-                Log($"tempDir = {tempDir}");
-
-                ZipFile.ExtractToDirectory(zipPath, tempDir, true);
-                Log("zip展開完了");
-
-                var sourceExe = Path.Combine(tempDir, "SystemMonitorHelper.exe");
-                var destExe = Path.Combine(appDir, "SystemMonitorHelper.exe");
-                var oldUpdater = Path.Combine(appDir, "Updater.exe");
+                Log($"sourceExe = {sourceExe}");
+                Log($"destExe = {destExe}");
 
                 if (!File.Exists(sourceExe))
                 {
-                    Log("zip内に SystemMonitorHelper.exe が見つかりません");
+                    Log("新しいexeが見つかりません");
                     return;
                 }
 
-                // 旧 Updater.exe が残っていたら消す
-                if (File.Exists(oldUpdater))
+                Thread.Sleep(3000);
+
+                var copied = false;
+
+                for (int i = 0; i < 15; i++)
                 {
                     try
                     {
-                        File.Delete(oldUpdater);
-                        Log("旧 Updater.exe 削除完了");
+                        if (File.Exists(destExe))
+                        {
+                            File.Delete(destExe);
+                            Log("旧 exe 削除完了");
+                        }
+
+                        File.Copy(sourceExe, destExe, true);
+                        Log("新 exe コピー完了");
+                        copied = true;
+                        break;
                     }
                     catch (Exception ex)
                     {
-                        Log($"旧 Updater.exe 削除失敗: {ex.Message}");
+                        Log($"コピー失敗 {i + 1}/15: {ex.Message}");
+                        Thread.Sleep(1000);
                     }
                 }
 
-                // exe 上書き用に少し待つ
-                Thread.Sleep(1000);
-
-                try
+                if (!copied)
                 {
-                    if (File.Exists(destExe))
-                    {
-                        File.Delete(destExe);
-                        Log("旧 SystemMonitorHelper.exe 削除完了");
-                    }
+                    Log("コピー失敗のため終了");
+                    return;
                 }
-                catch (Exception ex)
-                {
-                    Log($"旧 exe 削除失敗: {ex.Message}");
-                }
-
-                File.Copy(sourceExe, destExe, true);
-                Log("新 exe コピー完了");
 
                 if (File.Exists(destExe))
                 {
@@ -113,16 +96,6 @@ namespace Updater
                 else
                 {
                     Log("更新後 exe が見つかりません");
-                }
-
-                try
-                {
-                    File.Delete(zipPath);
-                    Log("zip削除完了");
-                }
-                catch (Exception ex)
-                {
-                    Log($"zip削除失敗: {ex.Message}");
                 }
             }
             catch (Exception ex)

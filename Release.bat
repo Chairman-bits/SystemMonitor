@@ -29,7 +29,7 @@ echo. >> "%LOG_FILE%"
 
 echo [0/6] version.json 更新
 powershell -NoProfile -ExecutionPolicy Bypass -Command ^
-  "$obj = @{ version = '%NEW_VERSION%'; url = 'https://raw.githubusercontent.com/Chairman-bits/SystemMonitor/main/app.zip' }; $obj | ConvertTo-Json -Compress | Set-Content -Path '%VERSION_JSON%' -Encoding UTF8" >> "%LOG_FILE%" 2>&1
+  "$obj = @{ latest = '%NEW_VERSION%'; url = 'https://raw.githubusercontent.com/Chairman-bits/SystemMonitor/main/app.zip' }; $obj | ConvertTo-Json -Compress | Set-Content -Path '%VERSION_JSON%' -Encoding UTF8" >> "%LOG_FILE%" 2>&1
 
 if errorlevel 1 (
     echo [ERROR] version.json 更新失敗

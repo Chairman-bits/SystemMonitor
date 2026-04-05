@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.IO.Compression;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
@@ -73,10 +74,12 @@ public static class AutoUpdater
     private static HttpClient CreateClient()
     {
         var client = new HttpClient();
+        client.Timeout = TimeSpan.FromSeconds(15);
         client.DefaultRequestHeaders.CacheControl = new CacheControlHeaderValue
         {
             NoCache = true
         };
+        client.DefaultRequestHeaders.UserAgent.ParseAdd("SystemMonitorHelper/1.0");
         return client;
     }
 
@@ -84,6 +87,8 @@ public static class AutoUpdater
     {
         try
         {
+            LastErrorMessage = "";
+
             using var client = CreateClient();
             var json = await client.GetStringAsync(VERSION_URL);
 
@@ -92,33 +97,41 @@ public static class AutoUpdater
                 PropertyNameCaseInsensitive = true
             });
 
+            CurrentVersionText = GetCurrentVersion();
+
             if (_versionInfo == null)
             {
+                LastCheckSucceeded = false;
                 HasUpdate = false;
                 LatestVersionText = "";
+                LastErrorMessage = "version.json の解析結果が null でした。";
                 return;
             }
 
             _versionInfo.latest = NormalizeVersion(_versionInfo.latest);
+            LatestVersionText = _versionInfo.latest;
 
-            var currentVersion = ParseVersionSafe(GetCurrentVersion());
-            var latestVersion = ParseVersionSafe(_versionInfo.latest);
+            var currentVersion = ParseVersionSafe(CurrentVersionText);
+            var latestVersion = ParseVersionSafe(LatestVersionText);
 
-            if (latestVersion > currentVersion)
+            if (latestVersion <= new Version(0, 0, 0))
             {
-                HasUpdate = true;
-                LatestVersionText = _versionInfo.latest;
-            }
-            else
-            {
+                LastCheckSucceeded = false;
                 HasUpdate = false;
-                LatestVersionText = "";
+                LastErrorMessage = $"latest の値が不正です: {LatestVersionText}";
+                return;
             }
+
+            LastCheckSucceeded = true;
+            HasUpdate = latestVersion > currentVersion;
         }
-        catch
+        catch (Exception ex)
         {
+            LastCheckSucceeded = false;
             HasUpdate = false;
+            CurrentVersionText = GetCurrentVersion();
             LatestVersionText = "";
+            LastErrorMessage = ex.Message;
         }
     }
 
@@ -162,10 +175,12 @@ public static class AutoUpdater
                 await File.WriteAllBytesAsync(tempZip, data);
             }
 
-            System.IO.Compression.ZipFile.ExtractToDirectory(tempZip, extractDir, true);
+            ZipFile.ExtractToDirectory(tempZip, extractDir, true);
 
             var updaterPath = Path.Combine(extractDir, "Updater.exe");
+            var newExePath = Path.Combine(extractDir, "SystemMonitorHelper.exe");
             var appDir = AppContext.BaseDirectory.TrimEnd('\\');
+            var currentExePath = Path.Combine(appDir, "SystemMonitorHelper.exe");
 
             if (!File.Exists(updaterPath))
             {
@@ -177,10 +192,20 @@ public static class AutoUpdater
                 return;
             }
 
+            if (!File.Exists(newExePath))
+            {
+                System.Windows.MessageBox.Show(
+                    "app.zip 内に SystemMonitorHelper.exe が見つかりません。",
+                    "アップデートエラー",
+                    System.Windows.MessageBoxButton.OK,
+                    System.Windows.MessageBoxImage.Error);
+                return;
+            }
+
             Process.Start(new ProcessStartInfo
             {
                 FileName = updaterPath,
-                Arguments = $"\"{tempZip}\" \"{appDir}\"",
+                Arguments = $"\"{newExePath}\" \"{currentExePath}\"",
                 UseShellExecute = true,
                 WorkingDirectory = extractDir
             });
@@ -191,7 +216,7 @@ public static class AutoUpdater
         {
             System.Windows.MessageBox.Show(
                 "アップデートの開始に失敗しました。\n" + ex.Message,
-                "アップデート",
+                "アップデートエラー",
                 System.Windows.MessageBoxButton.OK,
                 System.Windows.MessageBoxImage.Error);
         }
@@ -247,4 +272,9 @@ public static class AutoUpdater
         public string publishedAt { get; set; } = "";
         public List<string> notes { get; set; } = new();
     }
+
+    public static bool LastCheckSucceeded { get; private set; }
+    public static string CurrentVersionText { get; private set; } = "";
+
+    public static string LastErrorMessage { get; private set; } = "";
 }
