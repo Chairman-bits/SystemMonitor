@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace StealthStockOverlay
+namespace StealthStockOverlay.Models
 {
     public class AppSettings
     {
@@ -12,23 +12,14 @@ namespace StealthStockOverlay
         public bool HotkeyAlt { get; set; } = true;
         public bool HotkeyWin { get; set; }
 
-        public string HotkeyKey { get; set; } = "Q";
+        public string HotkeyKey { get; set; } = "Z";
+
+        public bool ShowOnlyWhileHotkeyHeld { get; set; } = true;
+
+        public string OverlayPosition { get; set; } = "BottomRight";
 
         public int OverlayMarginX { get; set; } = 12;
         public int OverlayMarginY { get; set; } = 12;
-
-        public string OverlayPosition { get; set; } = "右下";
-
-        // 新方式
-        public bool ShowOnlyWhileHeld { get; set; } = true;
-        public string DisplayMonitor { get; set; } = string.Empty;
-
-        // 旧コード互換
-        public bool ShowOnlyWhileHotkeyHeld
-        {
-            get => ShowOnlyWhileHeld;
-            set => ShowOnlyWhileHeld = value;
-        }
 
         public int DisplayMonitorIndex { get; set; } = 0;
     }
